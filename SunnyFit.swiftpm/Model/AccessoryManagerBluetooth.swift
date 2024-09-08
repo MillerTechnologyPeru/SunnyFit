@@ -107,11 +107,50 @@ public extension AccessoryManager {
 internal extension GATTConnection {
     
     func startStepper() async throws -> AsyncIndefiniteStream<StepperNotification> {
-        guard let characteristic = cache.characteristic(.sunnyFitStepperNotificationCharacteristic3, service: .sunnyFitStepperService) else {
+        guard let commandCharacteristic = cache.characteristic(.sunnyFitStepperCommandCharacteristic, service: .sunnyFitStepperService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperCommandCharacteristic)
+        }
+        guard let commandCharacteristic2 = cache.characteristic(.sunnyFitStepperCommandCharacteristic2, service: .sunnyFitStepperService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperCommandCharacteristic2)
+        }
+        guard let notificationCharacteristic = cache.characteristic(.sunnyFitStepperNotificationCharacteristic, service: .sunnyFitStepperService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperNotificationCharacteristic)
+        }
+        guard let notificationCharacteristic2 = cache.characteristic(.sunnyFitStepperNotificationCharacteristic2, service: .sunnyFitStepperService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperNotificationCharacteristic2)
+        }
+        guard let notificationCharacteristic3 = cache.characteristic(.sunnyFitStepperNotificationCharacteristic3, service: .sunnyFitStepperService) else {
             throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperNotificationCharacteristic3)
         }
-        throw CocoaError(.featureUnsupported) // TODO:
-        //return try await central.sunnyFitStepper(characteristic: characteristic)
+        let notifications1 = try await central.notify(for: notificationCharacteristic)
+        Task {
+            for try await data in notifications1 {
+                print(data.toHexadecimal())
+            }
+        }
+        let notifications2 = try await central.notify(for: notificationCharacteristic2)
+        Task {
+            for try await data in notifications2 {
+                print(data.toHexadecimal())
+            }
+        }
+        let notifications3 = try await central.stepperStatus(characteristic: notificationCharacteristic3)
+
+        // send start command
+        let command1 = Data([0x5A, 0x02, 0x00, 0x08, 0x07, 0xA0, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0xE6, 0xA5])
+        try await central.writeValue(command1, for: commandCharacteristic, withResponse: false)
+        try await Task.sleep(timeInterval: 0.5)
+        let command2 = Data([0x5A, 0x01, 0x00, 0x00, 0x01, 0xA5])
+        try await central.writeValue(command2, for: commandCharacteristic, withResponse: false)
+        try await Task.sleep(timeInterval: 0.5)
+        let command3 = Data([0x5A, 0x02, 0x00, 0x03, 0x02, 0xA3, 0x00, 0xAA, 0xA5])
+        try await central.writeValue(command3, for: commandCharacteristic, withResponse: false)
+        try await Task.sleep(timeInterval: 0.5)
+        
+        
+        let command4 = Data([0x5A, 0x04, 0x00, 0x00, 0x04, 0xA5])
+        try await central.writeValue(command4, for: commandCharacteristic2, withResponse: false)
+        return notifications3
     }
 }
 
