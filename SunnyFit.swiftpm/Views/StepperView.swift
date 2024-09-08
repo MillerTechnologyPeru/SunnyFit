@@ -36,7 +36,7 @@ struct StepperView: View {
                 }
             }
         }
-        .navigationTitle("Energy")
+        .navigationTitle("Stepper")
         .task {
             do {
                 let stream = try await store.startStepper(for: accessory.id)

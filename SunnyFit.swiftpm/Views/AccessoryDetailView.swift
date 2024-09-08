@@ -162,7 +162,7 @@ extension SunnyFitAccessoryDetailView {
                     }
                 }
             }
-            .navigationTitle("\(accessory.id)")
+            .navigationTitle("\(accessory.type)")
         }
     }
 }

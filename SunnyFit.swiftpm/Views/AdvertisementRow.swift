@@ -38,15 +38,7 @@ internal extension SunnyFitAdvertisementRow {
                 // icon
                 VStack {
                     if let information {
-                        CachedAsyncImage(
-                            url: URL(string: information.image),
-                            content: { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                            }, placeholder: {
-                                Image(systemName: information.symbol)
-                            })
+                        Image(systemName: information.symbol)
                     } else {
                         ProgressView()
                             .progressViewStyle(.circular)
