@@ -81,7 +81,13 @@ final class SunnyFitTests: XCTestCase {
         let address = BluetoothAddress(bigEndian: BluetoothAddress(data: Data(manufacturerData.additionalData[1 ..< 7]))!)
         XCTAssertEqual(address.description, "A4:C1:38:E0:FC:1D")
         
+        guard let accessory = SunnyFitAccessory(name: name, manufacturerData: manufacturerData) else {
+            XCTFail()
+            return
+        }
         
+        XCTAssertEqual(accessory.id, address)
+        XCTAssertEqual(accessory.type, .stepperMini)
     }
     
     func testStepperNotifications() throws {
@@ -95,10 +101,14 @@ final class SunnyFitTests: XCTestCase {
         
         for (index, data) in notifications.enumerated() {
             
-            let calories = UInt16(littleEndian: UInt16(bytes: (data[17], data[18])))
-            let reps = UInt16(littleEndian: UInt16(bytes: (data[13], data[14])))
-            let time = UInt16(littleEndian: UInt16(bytes: (data[23], data[24])))
-            print("\(index + 1). Kcal \(calories) Reps \(reps) Time \(time)")
+            XCTAssertEqual(data.count, 27)
+            
+            guard let value = StepperNotification(data: data) else {
+                XCTFail()
+                return
+            }
+            
+            print("\(index + 1). \(value)")
         }
     }
 }
