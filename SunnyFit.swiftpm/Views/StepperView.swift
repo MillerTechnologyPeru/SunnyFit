@@ -19,22 +19,21 @@ struct StepperView: View {
     private var store: AccessoryManager
     
     @State
-    private var values = [(Date, StepperNotification)]()
+    private var status = Status()
+    
+    private static var timeFormatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.second, .minute]
+        formatter.zeroFormattingBehavior = .pad
+        return formatter
+    }()
     
     var body: some View {
         VStack(alignment: .leading) {
-            List {
-                ForEach(values, id: \.0) { (date, status) in
-                    HStack {
-                        Text(date, style: .time)
-                        VStack {
-                            Text("\(status.time)s")
-                            Text("\(status.reps) reps")
-                            Text("\(status.calories)kcal")
-                        }
-                    }
-                }
-            }
+            Text("\(timeElapsed)")
+            Text("\(status.reps) reps")
+            Text("\(status.repsPerMinute) reps/min")
+            Text("\(status.calories) kcal")
         }
         .navigationTitle("Stepper")
         .task {
@@ -43,7 +42,9 @@ struct StepperView: View {
                 Task {
                     do {
                         for try await value in stream {
-                            values.append((Date(), value))
+                            self.status.timeElapsed = numericCast(value.time)
+                            self.status.repsPerMinute = numericCast(value.repsPerMin)
+                            self.status.calories = Float(value.calories) / 10
                         }
                     }
                     catch {
@@ -55,5 +56,26 @@ struct StepperView: View {
                 store.log("Unable to start exercise. \(error)")
             }
         }
+    }
+}
+
+private extension StepperView {
+    
+    var timeElapsed: String {
+        Self.timeFormatter.string(from: DateComponents(second: Int(status.timeElapsed)))!
+    }
+}
+
+internal extension StepperView {
+    
+    struct Status: Equatable, Hashable {
+        
+        var timeElapsed: UInt = 0
+        
+        var calories: Float = 0
+        
+        var repsPerMinute: UInt = 0
+                
+        var reps: UInt = 0
     }
 }
