@@ -34,12 +34,14 @@ final class SunnyFitTests: XCTestCase {
         
         let advertismentData: LowEnergyAdvertisingData = [0x05, 0x16, 0x01, 0x00, 0x04, 0x00, 0x0E, 0x09, 0x4E, 0x4F, 0x2E, 0x20, 0x30, 0x31, 0x32, 0x20, 0x53, 0x4D, 0x41, 0x52, 0x54]
         
-        guard let name = advertismentData.localName else {
+        guard let name = advertismentData.localName,
+              let serviceData = advertismentData.serviceData else {
             XCTFail()
             return
         }
         
-        XCTAssertEqual(name, "NO. 012 SMART")
+        XCTAssertEqual(name, SunnyFitAccessoryType.miniStepper.rawValue)
+        XCTAssertEqual(serviceData[.bit16(0x0001)], Data([0x04, 0x00]))
         
         /*
          Sep 07 01:08:30.991  HCI Event        0x0000  A4:C1:38:E0:FC:1D  LE - Ext ADV - 1 Report - Normal - Public - A4:C1:38:E0:FC:1D  -68 dBm - Manufacturer Specific Data - Channel 37  RECV
@@ -75,7 +77,9 @@ final class SunnyFitTests: XCTestCase {
         /// Along with Renata and Micro Crysta,l EM makes up the Electronic Systems Segment of the Swatch Group.
         XCTAssertEqual(manufacturerData.companyIdentifier, .emMicroelectronicMarin)
         
-        
+        // parse address
+        let address = BluetoothAddress(bigEndian: BluetoothAddress(data: Data(manufacturerData.additionalData[1 ..< 7]))!)
+        XCTAssertEqual(address.description, "A4:C1:38:E0:FC:1D")
         
         
     }
