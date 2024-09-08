@@ -2,18 +2,15 @@ import Foundation
 import Bluetooth
 import GATT
 
-public enum SunnyFitAccessory: Equatable, Hashable, Codable, Sendable {
+/// SunnyFit Bluetooth Accessory
+public struct SunnyFitAccessory: Equatable, Hashable, Codable, Sendable, Identifiable {
     
-    /// Mini Stepper
-    case miniStepper
+    public let id: BluetoothAddress
     
-    /// Total Body Smart Exercise Stepper Machine
-    case totalBodyStepper
-    
-    /// Smart Twist Stepper Machine
-    case twistStepper
+    public let type: SunnyFitAccessoryType
 }
 
+/// SunnyFit Accessory Name
 public enum SunnyFitAccessoryType: String, Codable, CaseIterable, Sendable {
     
     /// Smart Mini Stepper
