@@ -42,9 +42,14 @@ struct StepperView: View {
                 Task {
                     do {
                         for try await value in stream {
-                            self.status.timeElapsed = numericCast(value.time)
-                            self.status.repsPerMinute = numericCast(value.repsPerMin)
-                            self.status.calories = Float(value.calories) / 10
+                            switch value {
+                            case .status(let status):
+                                self.status.timeElapsed = numericCast(status.time)
+                                self.status.repsPerMinute = numericCast(status.repsPerMin)
+                                self.status.calories = Float(status.calories) / 10
+                            case .counter(let counter):
+                                self.status.reps = numericCast(counter.reps)
+                            }
                         }
                     }
                     catch {
