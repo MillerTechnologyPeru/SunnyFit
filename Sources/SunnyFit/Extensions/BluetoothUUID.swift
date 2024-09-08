@@ -19,18 +19,18 @@ public extension BluetoothUUID {
     }
     
     static var sunnyFitStepperNotificationCharacteristic: BluetoothUUID {
-        BluetoothUUID(rawValue: "OxFD710003-E950-458E-8A4D-A1CBC5AA4CCE")!
+        BluetoothUUID(rawValue: "FD710003-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
     
     static var sunnyFitStepperNotificationCharacteristic2: BluetoothUUID {
-        BluetoothUUID(rawValue: "OxFD710004-E950-458E-8A4D-A1CBC5AA4CCE")!
+        BluetoothUUID(rawValue: "FD710004-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
     
     static var sunnyFitStepperCommandCharacteristic2: BluetoothUUID {
-        BluetoothUUID(rawValue: "OxFD710005-E950-458E-8A4D-A1CBC5AA4CCE")!
+        BluetoothUUID(rawValue: "FD710005-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
     
     static var sunnyFitStepperNotificationCharacteristic3: BluetoothUUID {
-        BluetoothUUID(rawValue: "OxFD710005-E950-458E-8A4D-A1CBC5AA4CCE")!
+        BluetoothUUID(rawValue: "FD710006-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
 }
