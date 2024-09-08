@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NO. 012 SMART</key>
+	<dict>
+		<key>symbol</key>
+		<string>figure.step.training</string>
+		<key>image</key>
+		<string>https://sunnyhealthfitness.com/cdn/shop/files/sunny-health-fitness-steppers-smart-mini-stepper-w-exercise-bands-no012smart-1_1100x.jpg?v=1715123786</string>
+		<key>manual</key>
+		<string>https://cdn.shopify.com/s/files/1/0052/7043/7978/files/NO._012_SMART_manual.pdf</string>
+		<key>website</key>
+		<string>https://sunnyhealthfitness.com/products/smart-mini-stepper-with-exercise-bands-no-012smart</string>
+	</dict>
+</dict>
+</plist>
