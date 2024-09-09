@@ -2,6 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>SF-E902 SMART-H</key>
+	<dict>
+		<key>symbol</key>
+		<string>figure.elliptical</string>
+		<key>image</key>
+		<string>https://sunnyhealthfitness.com/cdn/shop/products/SUFFB1_1_1100x.jpg?v=1662075591</string>
+		<key>manual</key>
+		<string>https://cdn.shopify.com/s/files/1/0052/7043/7978/files/SF-E902_manual.pdf</string>
+		<key>website</key>
+		<string>https://sunnyhealthfitness.com/products/sunny-health-and-fitness-sf-e902-air-walk-trainer-glider-w-lcd-monitor</string>
+	</dict>
 	<key>NO. 012 SMART</key>
 	<dict>
 		<key>symbol</key>
