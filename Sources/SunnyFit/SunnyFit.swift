@@ -41,7 +41,7 @@ public enum SunnyFitAccessoryType: String, Codable, CaseIterable, Sendable {
     /// ![Image](https://sunnyhealthfitness.com/cdn/shop/products/SUFFB1_1_1100x.jpg?v=1662075591)
     ///
     /// [Product Page](https://sunnyhealthfitness.com/products/sunny-health-and-fitness-sf-e902-air-walk-trainer-glider-w-lcd-monitor)
-    case ellipticalAirWalk              = "SF-E902SMART"
+    case ellipticalAirWalk              = "SF-E902 SMART-H"
     
     /// Smart Upright Row-N-Ride® Exerciser
     ///
