@@ -2,6 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NO. 077 SMART-H</key>
+	<dict>
+		<key>symbol</key>
+		<string>figure.cross.training</string>
+		<key>image</key>
+		<string>https://sunnyhealthfitness.com/cdn/shop/files/Sunny-health-fitness-rowers-smart-upright-row-n-ride-exerciser-No.-077SMART-00_1100x.jpg?v=1699899291</string>
+		<key>manual</key>
+		<string>https://cdn.shopify.com/s/files/1/0052/7043/7978/files/NO._077_SMART_manual.pdf</string>
+		<key>website</key>
+		<string>https://sunnyhealthfitness.com/products/smart-upright-row-n-ride-exerciser-no-077smart</string>
+	</dict>
 	<key>SF-E902 SMART-H</key>
 	<dict>
 		<key>symbol</key>
