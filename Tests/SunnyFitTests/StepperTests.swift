@@ -111,7 +111,7 @@ final class StepperTests: XCTestCase {
             
             XCTAssertEqual(data.count, 20)
             
-            guard let value = StepperNotification.Status(data: data) else {
+            guard let value = SunnyFitNotification.Status(data: data) else {
                 XCTFail()
                 return
             }
@@ -132,7 +132,7 @@ final class StepperTests: XCTestCase {
             
             XCTAssertEqual(data.count, 12)
             
-            guard let value = StepperNotification.Counter(data: data) else {
+            guard let value = SunnyFitNotification.Counter(data: data) else {
                 XCTFail()
                 return
             }
