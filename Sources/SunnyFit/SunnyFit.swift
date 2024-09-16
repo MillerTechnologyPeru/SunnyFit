@@ -48,7 +48,7 @@ public enum SunnyFitAccessoryType: String, Codable, CaseIterable, Sendable {
     /// ![Image](https://sunnyhealthfitness.com/cdn/shop/files/Sunny-health-fitness-rowers-smart-upright-row-n-ride-exerciser-No.-077SMART-00_1100x.jpg?v=1699899291)
     ///
     /// [Product Page](https://sunnyhealthfitness.com/products/smart-upright-row-n-ride-exerciser-no-077smart)
-    case rowNRideUpright                = "NO. 077SMART"
+    case rowNRideUpright                = "NO. 077 SMART-H"
     
     /// Full Body Adjustable Multi-function Smart Row-N-Ride® Trainer
     ///

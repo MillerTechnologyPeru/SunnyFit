@@ -19,7 +19,10 @@ public extension SunnyFitAccessory {
         switch type {
         case .stepperMini,
             .stepperTotalBody,
-            .stepperTwist:
+            .stepperTwist,
+            .rowNRideUpright,
+            .rowNRideFullBody,
+            .rowNRideSquatAssist:
             guard manufacturerData.companyIdentifier == .emMicroelectronicMarin, manufacturerData.additionalData.count >= 7 else {
                 return nil
             }
@@ -30,12 +33,6 @@ public extension SunnyFitAccessory {
             }
             let companyBytes = manufacturerData.companyIdentifier.rawValue.littleEndian.bytes
             address = BluetoothAddress(littleEndian: BluetoothAddress(bytes: (companyBytes.0, companyBytes.1, manufacturerData.additionalData[0], manufacturerData.additionalData[1], manufacturerData.additionalData[2], manufacturerData.additionalData[3])))
-        case .rowNRideUpright:
-            fatalError()
-        case .rowNRideFullBody:
-            fatalError()
-        case .rowNRideSquatAssist:
-            fatalError()
         }
         
         self.init(id: address, type: type)
