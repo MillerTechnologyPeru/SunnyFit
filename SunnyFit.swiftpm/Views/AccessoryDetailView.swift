@@ -141,7 +141,8 @@ extension SunnyFitAccessoryDetailView {
                     
                     // Actions
                     switch accessory.type {
-                    case .stepperMini:
+                    case .stepperMini, 
+                        .rowNRideUpright:
                         NavigationLink(destination: {
                             StepperView(accessory: accessory)
                         }, label: {
