@@ -30,6 +30,9 @@ struct SunnyFitAccessoryDetailView: View {
     @State
     private var information: Result<SunnyFitAccessoryInfo, Error>?
     
+    @State
+    private var services = [ServiceSection]()
+    
     init(
         accessory: SunnyFitAccessory
     ) {
@@ -40,7 +43,8 @@ struct SunnyFitAccessoryDetailView: View {
         VStack {
             StateView(
                 accessory: accessory,
-                information: information
+                information: information,
+                services: services
             )
         }
         .refreshable {
@@ -58,29 +62,42 @@ struct SunnyFitAccessoryDetailView: View {
 extension SunnyFitAccessoryDetailView {
     
     func reload() {
-        // accessory metadata
-        if let accessoryInfo = store.accessoryInfo {
-            self.information = accessoryInfo[accessory.type].flatMap { .success($0) }
-        } else {
-            // load accessory info
-            fetchAccessoryInfo()
-        }
-    }
-    
-    func fetchAccessoryInfo() {
-        // networking and Bluetooth
         let store = self.store
+        let characteristicsTask = Task {
+            // read characteristics
+            if let peripheral, services.isEmpty {
+                try await store.central.connection(for: peripheral) { connection in
+                    try await readCharacteristics(connection: connection)
+                }
+            }
+        }
+        let accessoryMetadataTask = Task {
+            // accessory metadata
+            if let accessoryInfo = store.accessoryInfo {
+                self.information = accessoryInfo[accessory.type].flatMap { .success($0) }
+            } else {
+                // load accessory info
+                await fetchAccessoryInfo()
+            }
+        }
+        // networking and Bluetooth
         isReloading = true
         reloadTask = Task(priority: .userInitiated) {
             defer { isReloading = false }
-            do {
-                let accessoryInfo = try await store.downloadAccessoryInfo()
-                self.information = accessoryInfo[accessory.type]
-                    .flatMap { .success($0) } ?? .failure(CocoaError(.coderValueNotFound))
-            }
-            catch {
-                self.information = .failure(error)
-            }
+            await accessoryMetadataTask.value
+            try? await characteristicsTask.value
+        }
+    }
+    
+    func fetchAccessoryInfo() async {
+        do {
+            // fetch info from DB
+            let accessoryInfo = try await store.downloadAccessoryInfo()
+            self.information = accessoryInfo[accessory.type]
+                .flatMap { .success($0) } ?? .failure(CocoaError(.coderValueNotFound))
+        }
+        catch {
+            self.information = .failure(error)
         }
     }
     
@@ -109,6 +126,8 @@ extension SunnyFitAccessoryDetailView {
         let accessory: SunnyFitAccessory
         
         let information: Result<SunnyFitAccessoryInfo, Error>?
+        
+        let services: [ServiceSection]
         
         var body: some View {
             ScrollView {
@@ -161,42 +180,29 @@ extension SunnyFitAccessoryDetailView {
                             Link("Product Page", destination: website)
                         }
                     }
+                    
+                    // GATT Device Information
+                    ForEach(services) { service in
+                        Section(service.name) {
+                            ForEach(service.characteristics) { characteristic in
+                                SubtitleRow(
+                                    title: Text(characteristic.name),
+                                    subtitle: Text(verbatim: characteristic.value)
+                                )
+                            }
+                        }
+                    }
                 }
             }
-            .navigationTitle("\(accessory.type)")
+            .navigationTitle("\(accessory.type.rawValue)")
         }
     }
 }
 
-/*
-extension SunnyFitDetailView {
-    
-    func reload() {
-        let oldTask = reloadTask
-        reloadTask = Task {
-            self.error = nil
-            self.isReloading = true
-            defer { self.isReloading = false }
-            await oldTask?.value
-            do {
-                guard let beacons = store.peripherals[peripheral], beacons.isEmpty == false else {
-                    throw CentralError.unknownPeripheral
-                }
-                self.address = beacons.compactMapValues { $0.address }.values.first
-                self.capability = beacons.compactMap { $0.value.capability }.first ?? []
-                self.ioCapability = beacons.compactMap { $0.value.ioCapability }.first ?? []
-                // read characteristics
-                try await store.central.connection(for: peripheral) { connection in
-                    try await readCharacteristics(connection: connection)
-                }
-            }
-            catch {
-                self.error = error.localizedDescription
-            }
-        }
-    }
+extension SunnyFitAccessoryDetailView {
     
     func readCharacteristics(connection: GATTConnection<NativeCentral>) async throws {
+        
         var batteryService = ServiceSection(
             id: .batteryService,
             name: "Battery Service",
@@ -217,36 +223,6 @@ extension SunnyFitDetailView {
                     value: "\(value)%"
                 )
             )
-        }
-        
-        // read temperature and humidity
-        var thermometerService = ServiceSection(
-            id: TemperatureHumidityCharacteristic.service,
-            name: "Mi Thermometer Service",
-            characteristics: []
-        )
-        if let characteristic = connection.cache.characteristic(TemperatureHumidityCharacteristic.uuid, service: TemperatureHumidityCharacteristic.service) {
-            let data = try await connection.central.readValue(for: characteristic)
-            guard let value = TemperatureHumidityCharacteristic(data: data) else {
-                throw SunnyFitAppError.invalidCharacteristicValue(TemperatureHumidityCharacteristic.uuid)
-            }
-            thermometerService.characteristics += [
-                CharacteristicItem(
-                    id: characteristic.uuid.rawValue + "-" + "Temperature",
-                    name: "Temperature",
-                    value: value.temperature.description
-                ),
-                CharacteristicItem(
-                    id: characteristic.uuid.rawValue + "-" + "Humidity",
-                    name: "Humidity",
-                    value: value.humidity.description
-                ),
-                CharacteristicItem(
-                    id: characteristic.uuid.rawValue + "-" + "BatteryVoltage",
-                    name: "Battery Voltage",
-                    value: value.batteryVoltage.description
-                )
-            ]
         }
         
         // read device information
@@ -336,7 +312,6 @@ extension SunnyFitDetailView {
         
         // set services
         self.services = [
-            thermometerService,
             batteryService,
             deviceInformationService
         ]
@@ -344,67 +319,7 @@ extension SunnyFitDetailView {
     }
 }
 
-extension SunnyFitDetailView {
-    
-    struct StateView: View {
-        
-        let product: ProductID
-        
-        let address: BluetoothAddress?
-        
-        let version: UInt8
-        
-        let capability: SunnyFit.Capability
-        
-        let ioCapability: SunnyFit.Capability.IO
-        
-        let services: [ServiceSection]
-        
-        var body: some View {
-            List {
-                Section("Advertisement") {
-                    if let address = self.address {
-                        SubtitleRow(
-                            title: Text("Address"),
-                            subtitle: Text(verbatim: address.rawValue)
-                        )
-                    }
-                    SubtitleRow(
-                        title: Text("Version"),
-                        subtitle: Text(verbatim: version.description)
-                    )
-                    #if DEBUG
-                    if capability.isEmpty == false {
-                        SubtitleRow(
-                            title: Text("Capability"),
-                            subtitle: Text(verbatim: capability.description)
-                        )
-                    }
-                    if ioCapability.isEmpty == false {
-                        SubtitleRow(
-                            title: Text("IO Capability"),
-                            subtitle: Text(verbatim: ioCapability.description)
-                        )
-                    }
-                    #endif
-                }
-                ForEach(services) { service in
-                    Section(service.name) {
-                        ForEach(service.characteristics) { characteristic in
-                            SubtitleRow(
-                                title: Text(characteristic.name),
-                                subtitle: Text(verbatim: characteristic.value)
-                            )
-                        }
-                    }
-                }
-            }
-            .navigationTitle("\(product.description)")
-        }
-    }
-}
-
-extension SunnyFitDetailView {
+extension SunnyFitAccessoryDetailView {
     
     struct ServiceSection: Equatable, Identifiable {
         
@@ -424,4 +339,3 @@ extension SunnyFitDetailView {
         let value: String
     }
 }
-*/
