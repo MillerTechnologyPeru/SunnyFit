@@ -10,12 +10,12 @@ import Bluetooth
 import GATT
 
 /// SunnyFit Stepper Notification
-public enum StepperNotification: Equatable, Hashable {
+public enum SunnyFitNotification: Equatable, Hashable {
     
-    public static var uuid: BluetoothUUID { .sunnyFitStepperNotificationCharacteristic3 }
+    public static var uuid: BluetoothUUID { .sunnyFitNotificationCharacteristic3 }
     
-    case status(StepperNotification.Status)
-    case counter(StepperNotification.Counter)
+    case status(SunnyFitNotification.Status)
+    case counter(SunnyFitNotification.Counter)
     
     public init?(data: Data) {
         switch data.count {
@@ -37,7 +37,7 @@ public enum StepperNotification: Equatable, Hashable {
     }
 }
 
-public extension StepperNotification {
+public extension SunnyFitNotification {
     
     struct Status: Equatable, Hashable {
         
@@ -60,7 +60,7 @@ public extension StepperNotification {
     }
 }
 
-public extension StepperNotification {
+public extension SunnyFitNotification {
     
     struct Counter: Equatable, Hashable {
         
@@ -81,16 +81,16 @@ public extension StepperNotification {
 
 public extension CentralManager {
     
-    /// Recieve stream of stepper values.
-    func stepperStatus(
+    /// Recieve stream of SunnyFit device values.
+    func sunnyFitStatus(
         characteristic: Characteristic<Peripheral, AttributeID>
-    ) async throws -> AsyncIndefiniteStream<StepperNotification> {
-        assert(characteristic.uuid == .sunnyFitStepperNotificationCharacteristic3)
+    ) async throws -> AsyncIndefiniteStream<SunnyFitNotification> {
+        assert(characteristic.uuid == .sunnyFitNotificationCharacteristic3)
         let notifications = try await self.notify(for: characteristic)
         // parse notifications
-        return AsyncIndefiniteStream<StepperNotification> { build in
+        return AsyncIndefiniteStream<SunnyFitNotification> { build in
             for try await data in notifications {
-                guard let notification = StepperNotification(data: data) else {
+                guard let notification = SunnyFitNotification(data: data) else {
                     throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Invalid data."))
                 }
                 build(notification)

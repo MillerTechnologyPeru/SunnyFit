@@ -10,27 +10,27 @@ import Bluetooth
 
 public extension BluetoothUUID {
     
-    static var sunnyFitStepperService: BluetoothUUID {
+    static var sunnyFitService: BluetoothUUID {
         BluetoothUUID(rawValue: "FD710001-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
     
-    static var sunnyFitStepperCommandCharacteristic: BluetoothUUID {
+    static var sunnyFitCommandCharacteristic: BluetoothUUID {
         BluetoothUUID(rawValue: "FD710002-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
     
-    static var sunnyFitStepperNotificationCharacteristic: BluetoothUUID {
+    static var sunnyFitNotificationCharacteristic: BluetoothUUID {
         BluetoothUUID(rawValue: "FD710003-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
     
-    static var sunnyFitStepperNotificationCharacteristic2: BluetoothUUID {
+    static var sunnyFitNotificationCharacteristic2: BluetoothUUID {
         BluetoothUUID(rawValue: "FD710004-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
     
-    static var sunnyFitStepperCommandCharacteristic2: BluetoothUUID {
+    static var sunnyFitCommandCharacteristic2: BluetoothUUID {
         BluetoothUUID(rawValue: "FD710005-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
     
-    static var sunnyFitStepperNotificationCharacteristic3: BluetoothUUID {
+    static var sunnyFitNotificationCharacteristic3: BluetoothUUID {
         BluetoothUUID(rawValue: "FD710006-E950-458E-8A4D-A1CBC5AA4CCE")!
     }
 }
