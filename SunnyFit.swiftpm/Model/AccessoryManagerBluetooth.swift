@@ -98,7 +98,7 @@ public extension AccessoryManager {
     /// Recieve Stepper values.
     func startStepper(
         for accessory: SunnyFitAccessory.ID
-    ) async throws -> AsyncIndefiniteStream<StepperNotification> {
+    ) async throws -> AsyncIndefiniteStream<SunnyFitNotification> {
         let connection = try await connect(to: accessory)
         return try await connection.startStepper()
     }
@@ -106,21 +106,21 @@ public extension AccessoryManager {
 
 internal extension GATTConnection {
     
-    func startStepper() async throws -> AsyncIndefiniteStream<StepperNotification> {
-        guard let commandCharacteristic = cache.characteristic(.sunnyFitStepperCommandCharacteristic, service: .sunnyFitStepperService) else {
-            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperCommandCharacteristic)
+    func startStepper() async throws -> AsyncIndefiniteStream<SunnyFitNotification> {
+        guard let commandCharacteristic = cache.characteristic(.sunnyFitCommandCharacteristic, service: .sunnyFitService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitCommandCharacteristic)
         }
-        guard let commandCharacteristic2 = cache.characteristic(.sunnyFitStepperCommandCharacteristic2, service: .sunnyFitStepperService) else {
-            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperCommandCharacteristic2)
+        guard let commandCharacteristic2 = cache.characteristic(.sunnyFitCommandCharacteristic2, service: .sunnyFitService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitCommandCharacteristic2)
         }
-        guard let notificationCharacteristic = cache.characteristic(.sunnyFitStepperNotificationCharacteristic, service: .sunnyFitStepperService) else {
-            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperNotificationCharacteristic)
+        guard let notificationCharacteristic = cache.characteristic(.sunnyFitNotificationCharacteristic, service: .sunnyFitService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitNotificationCharacteristic)
         }
-        guard let notificationCharacteristic2 = cache.characteristic(.sunnyFitStepperNotificationCharacteristic2, service: .sunnyFitStepperService) else {
-            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperNotificationCharacteristic2)
+        guard let notificationCharacteristic2 = cache.characteristic(.sunnyFitNotificationCharacteristic2, service: .sunnyFitService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitNotificationCharacteristic2)
         }
-        guard let notificationCharacteristic3 = cache.characteristic(.sunnyFitStepperNotificationCharacteristic3, service: .sunnyFitStepperService) else {
-            throw SunnyFitAppError.characteristicNotFound(.sunnyFitStepperNotificationCharacteristic3)
+        guard let notificationCharacteristic3 = cache.characteristic(.sunnyFitNotificationCharacteristic3, service: .sunnyFitService) else {
+            throw SunnyFitAppError.characteristicNotFound(.sunnyFitNotificationCharacteristic3)
         }
         let notifications1 = try await central.notify(for: notificationCharacteristic)
         Task {
@@ -134,7 +134,7 @@ internal extension GATTConnection {
                 print(data.toHexadecimal())
             }
         }
-        let notifications3 = try await central.stepperStatus(characteristic: notificationCharacteristic3)
+        let notifications3 = try await central.sunnyFitStatus(characteristic: notificationCharacteristic3)
 
         // send start command
         let command1 = Data([0x5A, 0x02, 0x00, 0x08, 0x07, 0xA0, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0xE6, 0xA5])
